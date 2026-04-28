@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  author: OshchepkovDP
+  description: Install and configure LightHouse web UI for ClickHouse
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+  galaxy_tags:
+    - lighthouse
+    - nginx
+    - clickhouse
+    - monitoring
+
+dependencies: []

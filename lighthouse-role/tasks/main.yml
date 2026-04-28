@@ -1,0 +1,73 @@
+---
+# tasks file for lighthouse-role
+- name: Install NGINX and Git
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - git
+    state: present
+    update_cache: true
+  tags:
+    - lighthouse
+    - install
+
+- name: Create LightHouse install directory
+  ansible.builtin.file:
+    path: "{{ lighthouse_install_dir }}"
+    state: directory
+    mode: '0755'
+    owner: www-data
+    group: www-data
+  tags:
+    - lighthouse
+    - install
+
+- name: Clone LightHouse repository
+  ansible.builtin.git:
+    repo: "{{ lighthouse_repo }}"
+    dest: "{{ lighthouse_install_dir }}"
+    version: "{{ lighthouse_version }}"
+    force: true
+  notify: Reload NGINX
+  tags:
+    - lighthouse
+    - install
+
+- name: Deploy NGINX config for LightHouse
+  ansible.builtin.template:
+    src: lighthouse_nginx.conf.j2
+    dest: "{{ lighthouse_nginx_config_path }}"
+    mode: '0644'
+  notify: Reload NGINX
+  tags:
+    - lighthouse
+    - config
+
+- name: Enable LightHouse NGINX site
+  ansible.builtin.file:
+    src: "{{ lighthouse_nginx_config_path }}"
+    dest: "{{ lighthouse_nginx_enabled_path }}"
+    state: link
+  notify: Reload NGINX
+  tags:
+    - lighthouse
+    - config
+
+- name: Remove default NGINX site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload NGINX
+  tags:
+    - lighthouse
+    - config
+
+- name: Enable and start NGINX
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: true
+    daemon_reload: true
+  tags:
+    - lighthouse
+    - service

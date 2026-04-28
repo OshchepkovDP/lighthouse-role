@@ -1,0 +1,4 @@
+---
+# vars file for lighthouse-role
+lighthouse_nginx_config_path: "/etc/nginx/sites-available/lighthouse"
+lighthouse_nginx_enabled_path: "/etc/nginx/sites-enabled/lighthouse"
