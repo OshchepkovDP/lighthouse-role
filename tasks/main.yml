@@ -22,6 +22,12 @@
     - lighthouse
     - install
 
+- name: Remove existing LightHouse directory if present
+  ansible.builtin.file:
+    path: "{{ lighthouse_install_dir }}"
+    state: absent
+  tags: [lighthouse, install]
+
 - name: Clone LightHouse repository
   ansible.builtin.git:
     repo: "{{ lighthouse_repo }}"
